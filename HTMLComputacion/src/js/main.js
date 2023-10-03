@@ -27,6 +27,7 @@ function createThreejs(){
     document.body.appendChild( renderer.domElement );
 
     controls = new THREE.OrbitControls(camera, renderer.domElement);
+    camera.position.set(0,0,10);
     controls.update();
 
     //Grid helpers
@@ -39,6 +40,10 @@ function createThreejs(){
 
     //Callers
     //CreateGeometry();
+    createLights("AmbientLight");
+    loadOBJMTL("../models/OBJ_MTL/", "knight.mtl", "knight.obj");
+    //loadGLTF();
+    createCollectible();
     animate();
 }
 
@@ -51,7 +56,90 @@ function onWindowResize(){
     renderer.setSize( window.innerWidth, window.innerHeight );
 }
 
-function CreateGeometry(floors) {
+function loadOBJMTL(path, nameMTL, nameOBJ){
+    //Load MTL (Textura)
+    var mtlLoader = new THREE.MTLLoader();
+    mtlLoader.setResourcePath(path);
+    mtlLoader.setPath(path);
+    mtlLoader.load(nameMTL, function(material){
+        material.preload();
+        //Load OBJ (Mesh)
+        var objLoader = new THREE.OBJLoader();
+        objLoader.setPath(path)
+        objLoader.setMaterials(material);
+        objLoader.load(nameOBJ, function(OBJ) {
+            scene.add(OBJ);
+    })
+});
+}
+
+function loadGLTF(){
+    // Instantiate a loader
+    const loader = new THREE.GLTFLoader();
+    // Optional: Provide a DRACOLoader instance to decode compressed mesh data
+    const dracoLoader = new THREE.DRACOLoader();
+    dracoLoader.setDecoderPath( "../models/GLTF/" );
+    // dracoLoader.setDecoderPath( '/examples/jsm/libs/draco/' );
+    loader.setDRACOLoader( dracoLoader );
+
+    // Load a glTF resource
+    loader.load(
+        // resource URL
+        '../models/GLTF/Duck.gltf',
+        // called when the resource is loaded
+        function ( gltf ) {
+
+            scene.add( gltf.scene );
+
+            gltf.animations; // Array<THREE.AnimationClip>
+            gltf.scene; // THREE.Group
+            gltf.scenes; // Array<THREE.Group>
+            gltf.cameras; // Array<THREE.Camera>
+            gltf.asset; // Object
+
+        },
+        // called while loading is progressing
+        function ( xhr ) {
+
+            console.log( ( xhr.loaded / xhr.total * 100 ) + '% loaded' );
+
+        },
+        // called when loading has errors
+        function ( error ) {
+
+            console.log( 'An error happened' );
+
+        }
+    );
+}
+
+function createCollectible(){
+    var min = -15;
+    var max = 15;
+    for(var i=1; i<5; i++){
+        const geometry = new THREE.SphereGeometry( 1, 16, 10 ); 
+        const material = new THREE.MeshBasicMaterial( { color: 0xffff00 } ); 
+        const sphere = new THREE.Mesh( geometry, material ); 
+        scene.add( sphere );
+        sphere.position.set(Math.floor(Math.random() * (max - min +1) + min)
+                                       ,1
+                                       ,Math.random() * (max - min +1) + min)
+    }
+}
+
+function gameState(Case){
+    switch(Case){
+        case "game":
+            break;
+        case "win":
+            break;
+        case "lose":
+            break;
+    }
+}
+
+
+/*function CreateGeometry(floors) {
     let floorNumbers = document.getElementById("Floors").value;
     let floorColor = document.getElementById("colorpicker").value;
     for(var i=0; i<floorNumbers; i++ ){
@@ -75,7 +163,7 @@ function CreateGeometry(floors) {
     }
     builds += 1;
     camera.position.z = 5;
-}
+}*/
 
 function createLights(typeLights){
     //PointLight, SpotLight, AmbientLight
@@ -91,7 +179,7 @@ function createLights(typeLights){
             break;
         case "SpotLight":
             light = new THREE.SpotLight( 0xffffff );
-            light.position.set( 100, 1000, 100 );
+            light.position.set( 0, 1000, -200 );
             light.castShadow = true;
             scene.add( light );
             break;
