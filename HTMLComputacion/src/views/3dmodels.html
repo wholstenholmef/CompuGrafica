@@ -9,6 +9,8 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-4bw+/aepP/YC94hEpVNVgiZdgIC5+VKNBQNGCHeKRQN+PtmoHDEXuppvnDJzQIu9" crossorigin="anonymous">
 
     <!-- ThreeJs libs -->
+    <link rel="stylesheet" href="../css/gameScreen.css">
+
     <script src="../libs/three.js-master/build/three.min.js"></script>
     <script src="../libs/controls/OrbitControls.js"></script>
     
@@ -36,7 +38,19 @@
                 Souls : 0
             </div>
             <div class="container-fluid"> 
-                Time : 0
+                <p id="counter"> </p>
+                <script>
+                    var seconds = 60;
+                    var x = setInterval(function(){
+                        if (seconds > 0){
+                            seconds = seconds - 1;
+                        }else{
+                            gameState("lose");
+                        }
+                        document.getElementById("counter").innerHTML = "Time: " + seconds;
+                    }, 1000);
+                    
+                </script>
             </div>
         </nav>
     </header>

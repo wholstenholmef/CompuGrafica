@@ -42,6 +42,7 @@ function createThreejs(){
     //CreateGeometry();
     createLights("AmbientLight");
     loadOBJMTL("../models/OBJ_MTL/", "knight.mtl", "knight.obj");
+    createPlayerCollision();
     //loadGLTF();
     createCollectible();
     animate();
@@ -134,8 +135,16 @@ function gameState(Case){
         case "win":
             break;
         case "lose":
-            break;
+            document.getElementById("loseScreen").style.display = "block";
     }
+}
+
+function createPlayerCollision(){
+    const geometry = new THREE.BoxGeometry( 1, 3, 1 ); 
+    const material = new THREE.MeshBasicMaterial( {color: 0x00ff00, wireframe: true} ); 
+    const cube = new THREE.Mesh( geometry, material ); 
+    cube.position.y = 1.5
+    scene.add( cube );
 }
 
 
