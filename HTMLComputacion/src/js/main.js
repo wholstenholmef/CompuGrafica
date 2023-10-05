@@ -3,6 +3,7 @@
     Date of last modification: 24/8/2023 ?:??
 */
 
+//Variables
 var scene = null,
     camera = null, 
     renderer = null,
@@ -26,9 +27,11 @@ function createThreejs(){
     renderer.setSize( window.innerWidth, window.innerHeight);
     document.body.appendChild( renderer.domElement );
 
-    controls = new THREE.OrbitControls(camera, renderer.domElement);
-    camera.position.set(0,0,10);
-    controls.update();
+    //controls = new THREE.OrbitControls(camera, renderer.domElement);
+    camera.position.set(0,3,20);
+
+    //camera.lookAt(0, 0, 5)
+    //controls.update();
 
     //Grid helpers
     const gridHelper = new THREE.GridHelper( size, divisions );
@@ -55,23 +58,6 @@ function onWindowResize(){
     camera.updateProjectionMatrix();
 
     renderer.setSize( window.innerWidth, window.innerHeight );
-}
-
-function loadOBJMTL(path, nameMTL, nameOBJ){
-    //Load MTL (Textura)
-    var mtlLoader = new THREE.MTLLoader();
-    mtlLoader.setResourcePath(path);
-    mtlLoader.setPath(path);
-    mtlLoader.load(nameMTL, function(material){
-        material.preload();
-        //Load OBJ (Mesh)
-        var objLoader = new THREE.OBJLoader();
-        objLoader.setPath(path)
-        objLoader.setMaterials(material);
-        objLoader.load(nameOBJ, function(OBJ) {
-            scene.add(OBJ);
-    })
-});
 }
 
 function loadGLTF(){
@@ -139,13 +125,13 @@ function gameState(Case){
     }
 }
 
-function createPlayerCollision(){
+/*function createPlayerCollision(){
     const geometry = new THREE.BoxGeometry( 1, 3, 1 ); 
     const material = new THREE.MeshBasicMaterial( {color: 0x00ff00, wireframe: true} ); 
-    const cube = new THREE.Mesh( geometry, material ); 
-    cube.position.y = 1.5
-    scene.add( cube );
-}
+    const collider = new THREE.Mesh( geometry, material ); 
+    collider.position.y = 1.5
+    scene.add( collider );
+}*/
 
 
 /*function CreateGeometry(floors) {
@@ -196,14 +182,16 @@ function createLights(typeLights){
 
 }
 
+function initSound3D() {
+    sound3D = new Sound3D(["../sound/ambiance.mp3"], 30, scene, {
+        debug: true,
+        position: {x:0, y:4, z:0}
+    })
+}
+
 function animate() {
 	requestAnimationFrame( animate );
     // rotateCube();
 	renderer.render( scene, camera );
-}
-
-function rotateCube() {
-    cube.rotation.x -= SPEED * 2;
-    cube.rotation.y -= SPEED;
-    cube.rotation.z -= SPEED * 3;
+    movementPlayer();
 }
